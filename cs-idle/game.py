@@ -2,11 +2,27 @@ import pygame
 import json
 import config
 
+from scenes.main_menu import MainMenuScene
+
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.running = True
+
+        self.scenes = {
+            "MAIN_MENU": MainMenuScene(self)
+        }
+
+        self.current_scene = self.scenes["MAIN_MENU"]
+
+
+    def switch_scene(self, scene_name):
+        if scene_name == "QUIT":
+            self.running = False
+        
+        self.current_scene = self.scenes[scene_name]
+
 
     def run(self):
         while self.running:
@@ -15,6 +31,11 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
             
+            self.current_scene.handle_events(events)
+            self.current_scene.update()
             self.screen.fill(config.COR_BACKGROUND)
+            self.current_scene.draw(self.screen)
+            
             pygame.display.flip()
             self.clock.tick(config.FPS)
+
