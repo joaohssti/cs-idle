@@ -7,30 +7,40 @@ class MainMenuScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         
+        self.buttons = []
         actions = [
-            lambda: self.game.switch_scene("GAME"),
-            lambda: self.game.switch_scene("ABOUT"),
+            lambda: print("GAME"),
+            lambda: print("ABOUT"),
             lambda: self.game.switch_scene("QUIT"),
         ]
 
-        self.button = Button(
-            text = "about",
-            width=100,
-            height=50,
-            center_pos=(200,200),
-            font=pygame.font.Font(None, 50),
-            action=lambda: print("about")
-        )
+        button_texts = ["Novo Jogo", "Sobre o Jogo", "Sair"]
+        n_buttons = len(button_texts)
+
+        for i, text in enumerate(button_texts):
+            # Calcula posição do botão
+            center_pos = (config.LAGRUGA_SCREEN//2, 100+100*i)
+
+            # Cria e adiciona um botão
+            button = Button(
+                text = text,
+                width=100, height=50,
+                center_pos=center_pos,
+                font=pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-black.otf", 30),
+                action=actions[i]
+            )
+            self.buttons.append(button)
 
     def handle_events(self, events):
         for event in events:
-            self.button.handle_event(event)
+            for button in self.buttons:
+                button.handle_event(event)
 
     def update(self):
         pass
 
     def draw(self, screen):
-        
-        self.button.draw(screen)
+        for button in self.buttons:
+            button.draw(screen)
 
         

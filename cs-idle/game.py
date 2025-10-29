@@ -20,8 +20,8 @@ class Game:
     def switch_scene(self, scene_name):
         if scene_name == "QUIT":
             self.running = False
-        
-        self.current_scene = self.scenes[scene_name]
+        elif scene_name in self.scenes:
+            self.current_scene = self.scenes[scene_name]
 
 
     def run(self):
