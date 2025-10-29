@@ -10,23 +10,24 @@ class MainMenuScene(BaseScene):
         self.buttons = []
         actions = [
             lambda: print("GAME"),
+            lambda: print("LOAD"),
             lambda: print("ABOUT"),
             lambda: self.game.switch_scene("QUIT"),
         ]
 
-        button_texts = ["Novo Jogo", "Sobre o Jogo", "Sair"]
+        button_texts = ["Novo Jogo", "Carregar Jogo", "Sobre o Jogo", "Sair"]
         n_buttons = len(button_texts)
 
         for i, text in enumerate(button_texts):
             # Calcula posição do botão
-            center_pos = (config.LAGRUGA_SCREEN//2, 100+100*i)
+            center_pos = (config.LAGRUGA_SCREEN//2, 300+100*i)
 
             # Cria e adiciona um botão
             button = Button(
                 text = text,
-                width=100, height=50,
+                width=350, height=60,
                 center_pos=center_pos,
-                font=pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-black.otf", 30),
+                font=pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-black.otf", 40),
                 action=actions[i]
             )
             self.buttons.append(button)
