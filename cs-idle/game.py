@@ -3,6 +3,7 @@ import json
 import config
 
 from scenes.main_menu import MainMenuScene
+from scenes.about import AboutScene
 
 class Game:
     def __init__(self, screen, clock):
@@ -11,7 +12,8 @@ class Game:
         self.running = True
 
         self.scenes = {
-            "MAIN_MENU": MainMenuScene(self)
+            "MAIN_MENU": MainMenuScene(self),
+            "ABOUT": AboutScene(self)
         }
 
         self.current_scene = self.scenes["MAIN_MENU"]

@@ -7,11 +7,16 @@ class MainMenuScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         
+        self.title_text = "Computador Clicker"
+        self.title_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-bold.otf", 100)
+        self.title_surf = self.title_font.render(self.title_text,True, config.COR_BUTTON_TEXT)
+        self.title_rect = self.title_surf.get_rect(center=(config.LAGRUGA_SCREEN//2, 200))
+        
         self.buttons = []
         actions = [
             lambda: print("GAME"),
             lambda: print("LOAD"),
-            lambda: print("ABOUT"),
+            lambda: self.game.switch_scene("ABOUT"),
             lambda: self.game.switch_scene("QUIT"),
         ]
 
@@ -41,6 +46,9 @@ class MainMenuScene(BaseScene):
         pass
 
     def draw(self, screen):
+
+        screen.blit(self.title_surf, self.title_rect)
+
         for button in self.buttons:
             button.draw(screen)
 
