@@ -1,4 +1,5 @@
 
+saves_path = "cs-idle/data/saves/"
 
 LAGRUGA_SCREEN = 1600
 ALTURA_SCREEN = 900
@@ -6,7 +7,6 @@ FPS = 60
 
 
 COR_BACKGROUND = (0,80,0)
-
 
 COR_BUTTON = (0,70,0)
 COR_BUTTON_HOVER = (40,110,20)

@@ -2,16 +2,16 @@ import os
 import pygame
 import config
 from scenes.base_scene import BaseScene
+from scenes.idle_screen import IdleScreen
 from ui.button import Button
 from ui.image_button import ImageButton
 
-class SavesDisplay(BaseScene):
+class SavesScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         
-        self.saves_path = "cs-idle/data/saves/"
         self.saves = self.find_saves()                                              # Encontra os .json da pasta de saves
-        self.games = [lambda s=save: self.load_data(s) for save in self.saves]      # cria referência para carregamendo de cada save
+        self.games = [lambda s=save: self.set_save(s) for save in self.saves]      # cria referência para carregamendo de cada save
         self.deletes = [lambda s=save: self.delete_save(s) for save in self.saves]  # cria referência para remoção de cada save
 
         self.title_text = "Selecione seu Jogo"
@@ -46,15 +46,14 @@ class SavesDisplay(BaseScene):
         
     def find_saves(self):
         saves_found = []
-
-        for filename in os.listdir(self.saves_path):
-            if filename.endswith('.json') and os.path.isfile(os.path.join(self.saves_path,filename)):
+        for filename in os.listdir(config.saves_path):
+            if filename.endswith('.json'):
                 saves_found.append(filename)
-        
         return saves_found
     
-    def load_data(self, save):
-        print(save + " Loaded")
+    def set_save(self, save):
+        self.game.current_save = save
+        self.game.switch_scene("GAME")
 
     def delete_save(self, save):
         print(save + " Deleted")

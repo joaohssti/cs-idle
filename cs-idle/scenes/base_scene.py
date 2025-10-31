@@ -9,7 +9,7 @@ class BaseScene:
             image = pygame.image.load("cs-idle/assets/icons/power.png").convert_alpha(),
             width=40, height=40,
             center_pos=(50,50),
-            action= lambda: self.game.switch_scene("MAIN_MENU"),
+            action= self.menu_button,
             outline_thickness=3
         )
 
@@ -31,6 +31,10 @@ class BaseScene:
             outline_thickness=3
         )
         self.common_ui_elements = [self.power_button, self.save_button, self.volume_button]
+
+    def menu_button(self):
+        self.game.current_save = "New Game"
+        self.game.switch_scene("MAIN_MENU")
 
     def handle_events(self, events):
         for event in events:
