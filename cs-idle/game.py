@@ -1,5 +1,4 @@
 import pygame
-import json
 import config
 
 from scenes.main_menu import MainMenuScene
@@ -12,7 +11,9 @@ class Game:
         self.screen = screen
         self.clock = clock
         self.running = True
-        self.current_save = "New game"
+        self.saves_are_updated = False
+        self.current_save = "New Game"
+        self.save_data = {}
 
         self.scenes = {
             "MAIN_MENU": MainMenuScene(self),
@@ -32,6 +33,7 @@ class Game:
     
     def run(self):
         while self.running:
+            
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
@@ -43,5 +45,4 @@ class Game:
             self.current_scene.draw(self.screen)
             
             pygame.display.flip()
-            self.clock.tick(config.FPS)
 
