@@ -15,7 +15,7 @@ class MainMenuScene(BaseScene):
         self.buttons = []
         actions = [
             lambda: print("GAME"),
-            lambda: print("LOAD"),
+            lambda: self.game.switch_scene("LOAD"),
             lambda: self.game.switch_scene("ABOUT"),
             lambda: self.game.switch_scene("QUIT"),
         ]

@@ -4,6 +4,7 @@ import config
 
 from scenes.main_menu import MainMenuScene
 from scenes.about import AboutScene
+from scenes.saves_display import SavesDisplay
 
 class Game:
     def __init__(self, screen, clock):
@@ -13,6 +14,7 @@ class Game:
 
         self.scenes = {
             "MAIN_MENU": MainMenuScene(self),
+            "LOAD": SavesDisplay(self),
             "ABOUT": AboutScene(self)
         }
 
