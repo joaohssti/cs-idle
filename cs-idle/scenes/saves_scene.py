@@ -70,7 +70,9 @@ class SavesScene(BaseScene):
         self.game.switch_scene("GAME")
 
     def delete_save(self, save):
+        os.remove(os.path.join(config.saves_path, save))
         print(save + " Deleted")
+        self.game.saves_are_updated = False
 
     def handle_events(self, events):
         super().handle_events(events)

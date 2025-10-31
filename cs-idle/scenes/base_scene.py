@@ -38,11 +38,12 @@ class BaseScene:
 
     def menu_button(self):
         self.game.current_save = "New Game"
-        self.game.saves_are_updated = False
         self.game.save_data = {}
         self.game.switch_scene("MAIN_MENU")
 
     def save_button(self):
+        self.game.saves_are_updated = False
+
         # Dá nome a um save de um novo jogo
         if self.game.current_save == "New Game":
             self.game.current_save =  f"{str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))}.json"
