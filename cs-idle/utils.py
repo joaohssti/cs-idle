@@ -5,7 +5,7 @@ def formatDataUnit(n:int) -> str:
     sufixos = ['byte', 'kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb']
 
     if n < 1024:
-        return f"{n} {sufixos[0]}"
+        return f"{int(n)} {sufixos[0]}"
 
     magnitude = int(math.floor(math.log10(n)) / 3)
 
