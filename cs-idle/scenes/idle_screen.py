@@ -7,15 +7,11 @@ import utils
 from scenes.base_scene import BaseScene
 from ui.button import Button
 from ui.image_button import ImageButton
+from ui.progress_bar import ProgressBar
 
 class IdleScreen(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        
-        if self.game.current_save == "New Game":
-            with open("cs-idle/data/initial_game_state.json", 'r') as f:
-                self.game.save_data = json.load(f)
-                print("new game loaded ", self.game.save_data)
 
         # Divide a tela em 2 partes, com 1/3 e com 2/3
         self.screen_rect = self.game.screen.get_rect()
@@ -25,6 +21,8 @@ class IdleScreen(BaseScene):
         self.title_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-bold.otf", 20)
         self.base_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-light.otf", 18)
         self.buttons = []
+
+        self.temp_bar = ProgressBar(x=self.left_frame.left + 50, y=700, width=self.left_frame.width - 100, height=30, min_value=self.game.save_data["min_temperature"],max_value=self.game.save_data["max_temperature"])
 
         self._build_computer()
 
@@ -56,10 +54,10 @@ class IdleScreen(BaseScene):
         self.left_frame_info.append((timer_surf, timer_rect))
 
     def computer_click(self):
-        click_bytes = self.game.save_data.get('click_bytes', 0.0)
-        click_bytes += 1
-        self.game.save_data['click_bytes'] = click_bytes
-        print(self.game.save_data['click_bytes'])
+        click_power = 5
+        self.game.save_data['click_bytes'] += click_power
+        self.game.save_data['temperature'] = min( self.game.save_data['temperature'] + click_power, self.game.save_data['max_temperature'])
+        print(self.game.save_data['temperature'])
 
     def handle_events(self, events):
         super().handle_events(events)
@@ -70,12 +68,11 @@ class IdleScreen(BaseScene):
             self.computer_click_button.handle_event(event)
 
     def update(self):
-        
-        dt = self.game.clock.tick(config.FPS)
+        # Atualiza o tempo de  jogo
+        self.game.save_data['playtime'] += self.game.clock.tick(config.FPS)
+        self.game.save_data['temperature'] = max(self.game.save_data['temperature']  - (1 / config.FPS), self.game.save_data['min_temperature'])
 
-        playtime = self.game.save_data.get('playtime', 0.0)
-        playtime += dt
-        self.game.save_data['playtime'] = playtime
+        self.temp_bar.set_value(self.game.save_data['temperature'])
 
     def draw(self, screen):
         super().draw(screen)
@@ -86,6 +83,7 @@ class IdleScreen(BaseScene):
         self.computer_click_button.draw(screen)
 
         self._buil_left_frame_info()
+        self.temp_bar.draw(screen)
 
         for surface, rect in self.left_frame_info:
             screen.blit(surface, rect)

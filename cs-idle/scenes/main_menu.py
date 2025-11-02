@@ -1,5 +1,6 @@
 import pygame
 import config
+import json
 from scenes.base_scene import BaseScene
 from ui.button import Button
 
@@ -14,7 +15,7 @@ class MainMenuScene(BaseScene):
         
         self.buttons = []
         actions = [
-            lambda: self.game.switch_scene("GAME"),
+            self.new_game_button,
             lambda: self.game.switch_scene("LOAD"),
             lambda: self.game.switch_scene("ABOUT"),
             lambda: self.game.switch_scene("QUIT"),
@@ -36,6 +37,12 @@ class MainMenuScene(BaseScene):
                 action=actions[i]
             )
             self.buttons.append(button)
+
+    def new_game_button(self):
+        with open("cs-idle/data/initial_game_state.json", 'r') as f:
+            self.game.save_data = json.load(f)
+            print("new game loaded ", self.game.save_data)
+        self.game.start_game()
 
     def handle_events(self, events):
         for event in events:

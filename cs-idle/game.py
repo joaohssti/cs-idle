@@ -17,7 +17,6 @@ class Game:
 
         self.scenes = {
             "MAIN_MENU": MainMenuScene(self),
-            "GAME": IdleScreen(self),
             "LOAD": SavesScene(self),
             "ABOUT": AboutScene(self),
         }
@@ -30,6 +29,11 @@ class Game:
             self.running = False
         elif scene_name in self.scenes:
             self.current_scene = self.scenes[scene_name]
+
+    def start_game(self):
+        new_game_scene = IdleScreen(self)
+        self.scenes["GAME"] = new_game_scene
+        self.current_scene = self.scenes["GAME"]
     
     def run(self):
         while self.running:

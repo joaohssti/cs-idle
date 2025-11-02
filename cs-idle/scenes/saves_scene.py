@@ -67,7 +67,7 @@ class SavesScene(BaseScene):
         except (FileNotFoundError, json.JSONDecodeError):
             self.game.save_data = {}
 
-        self.game.switch_scene("GAME")
+        self.game.start_game()
 
     def delete_save(self, save):
         os.remove(os.path.join(config.saves_path, save))

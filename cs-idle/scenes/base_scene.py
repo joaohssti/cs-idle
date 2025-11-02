@@ -37,8 +37,6 @@ class BaseScene:
         self.common_ui_elements = [self.power_button, self.save_button, self.volume_button]
 
     def menu_button(self):
-        self.game.current_save = "New Game"
-        self.game.save_data = {}
         self.game.switch_scene("MAIN_MENU")
 
     def save_button(self):

@@ -1,4 +1,7 @@
 {
     "playtime":0,
+    "temperature":30,
+    "min_temperature":30,
+    "max_temperature":80,
     "click_bytes":0
 }
