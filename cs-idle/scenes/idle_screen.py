@@ -22,12 +22,31 @@ class IdleScreen(BaseScene):
         self.base_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-light.otf", 18)
         self.buttons = []
 
+        # Temperatura
         self.temp_bar = ProgressBar(x=self.left_frame.left + 50, y=700, width=self.left_frame.width - 100, height=30, min_value=self.game.save_data["min_temperature"],max_value=self.game.save_data["max_temperature"])
         self.fire = pygame.image.load("cs-idle/assets/parts/fire.png")
         self.fire = pygame.transform.scale(self.fire, (128, 128)).convert_alpha()
         self.fire_rect = self.fire.get_rect(center=self.left_frame.center)
 
+        # Botão de clicar no computador
         self._build_computer()
+
+        # Frames para abas e conteúdo das abas
+        self.tab_bar_rect = pygame.Rect(self.right_frame.left, self.right_frame.top, self.right_frame.width, 100)
+        self.content_area_rect = pygame.Rect(self.right_frame.left, self.right_frame.bottom, self.right_frame.width, self.right_frame.height-self.tab_bar_rect.height)
+        
+        # Cria as abas e calcula o posicionamento
+        self.tabs = []
+        tab_names = ["Upgrades", "Shop", "Status", "Campanha"]
+        self.active_tab = tab_names[0]
+        for i, name in enumerate(tab_names):
+            center_x = self.tab_bar_rect.left + (self.tab_bar_rect.width / (len(tab_names) + 1)) * (i + 1)
+            tab = Button(text=name, 
+                         center_pos=(center_x, self.tab_bar_rect.centery), 
+                         width=130, height=50, 
+                         font=self.base_font, 
+                         action=self.create_tab_action(name))
+            self.tabs.append(tab)
 
     def _build_computer(self):
         self.is_overheated = False
@@ -62,6 +81,10 @@ class IdleScreen(BaseScene):
         temp_rect = temp_surf.get_rect(center=(self.left_frame.centerx, 680))
         self.left_frame_info.append((temp_surf, temp_rect))
 
+    def create_tab_action(self, tab_name):
+        def action():self.active_tab = tab_name;print(tab_name)
+        return action
+    
     def computer_click(self):
         # bloqueia o funcionamento do clique se exceder temperatura máxima
         if self.is_overheated:
@@ -78,6 +101,9 @@ class IdleScreen(BaseScene):
             
             self.computer_click_button.handle_event(event)
 
+            for tab in self.tabs:
+                tab.handle_event(event)
+                
     def update(self):
         # Atualiza o tempo de  jogo
         self.game.save_data['playtime'] += self.game.clock.tick(config.FPS)
@@ -107,4 +133,7 @@ class IdleScreen(BaseScene):
 
         for surface, rect in self.left_frame_info:
             screen.blit(surface, rect)
+
+        for tab in self.tabs:
+            tab.draw(screen)
 
