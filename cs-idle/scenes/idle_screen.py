@@ -23,10 +23,14 @@ class IdleScreen(BaseScene):
         self.buttons = []
 
         self.temp_bar = ProgressBar(x=self.left_frame.left + 50, y=700, width=self.left_frame.width - 100, height=30, min_value=self.game.save_data["min_temperature"],max_value=self.game.save_data["max_temperature"])
+        self.fire = pygame.image.load("cs-idle/assets/parts/fire.png")
+        self.fire = pygame.transform.scale(self.fire, (128, 128)).convert_alpha()
+        self.fire_rect = self.fire.get_rect(center=self.left_frame.center)
 
         self._build_computer()
 
     def _build_computer(self):
+        self.is_overheated = False
         self.computer_click_button = ImageButton(
             image=pygame.image.load("cs-idle/assets/parts/motherboard.png").convert_alpha(),
             width=256, height=256,
@@ -53,11 +57,18 @@ class IdleScreen(BaseScene):
         timer_rect = timer_surf.get_rect(center=(self.left_frame.centerx, 250))
         self.left_frame_info.append((timer_surf, timer_rect))
 
+        temp_text = f"Temperatura: {(self.game.save_data['temperature']):.1f}ºC /{(self.game.save_data['max_temperature'])}°C"
+        temp_surf = self.base_font.render(temp_text, True, config.COR_BUTTON_TEXT)
+        temp_rect = temp_surf.get_rect(center=(self.left_frame.centerx, 680))
+        self.left_frame_info.append((temp_surf, temp_rect))
+
     def computer_click(self):
+        # bloqueia o funcionamento do clique se exceder temperatura máxima
+        if self.is_overheated:
+            return
         click_power = 5
         self.game.save_data['click_bytes'] += click_power
-        self.game.save_data['temperature'] = min( self.game.save_data['temperature'] + click_power, self.game.save_data['max_temperature'])
-        print(self.game.save_data['temperature'])
+        self.game.save_data['temperature'] = min( self.game.save_data['temperature'] + click_power, self.game.save_data['max_temperature']+5)
 
     def handle_events(self, events):
         super().handle_events(events)
@@ -70,9 +81,16 @@ class IdleScreen(BaseScene):
     def update(self):
         # Atualiza o tempo de  jogo
         self.game.save_data['playtime'] += self.game.clock.tick(config.FPS)
-        self.game.save_data['temperature'] = max(self.game.save_data['temperature']  - (1 / config.FPS), self.game.save_data['min_temperature'])
 
+        # Reduz a temperatura baseada no resfriamento (ainda não implementada melhoria de resfriamento, então 1ºC/s)
+        self.game.save_data['temperature'] = max(self.game.save_data['temperature']  - (1 / config.FPS), self.game.save_data['min_temperature'])
         self.temp_bar.set_value(self.game.save_data['temperature'])
+        if self.game.save_data['temperature'] >= self.game.save_data['max_temperature']:        # Computador superaqueceu
+            self.is_overheated = True
+        elif self.game.save_data['temperature'] <= self.game.save_data['recover_temperature']:  # Computador resfriou o bastante
+            self.is_overheated = False
+            
+
 
     def draw(self, screen):
         super().draw(screen)
@@ -84,6 +102,8 @@ class IdleScreen(BaseScene):
 
         self._buil_left_frame_info()
         self.temp_bar.draw(screen)
+        if self.is_overheated:
+            screen.blit(self.fire, self.fire_rect)
 
         for surface, rect in self.left_frame_info:
             screen.blit(surface, rect)
