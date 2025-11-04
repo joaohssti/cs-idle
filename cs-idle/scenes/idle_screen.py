@@ -5,6 +5,7 @@ import pygame
 import config
 import utils
 from scenes.base_scene import BaseScene
+from scenes.tabs import UpgradeTab, ShopTab
 from ui.button import Button
 from ui.image_button import ImageButton
 from ui.progress_bar import ProgressBar
@@ -33,12 +34,21 @@ class IdleScreen(BaseScene):
 
         # Frames para abas e conteúdo das abas
         self.tab_bar_rect = pygame.Rect(self.right_frame.left, self.right_frame.top, self.right_frame.width, 100)
-        self.content_area_rect = pygame.Rect(self.right_frame.left, self.right_frame.bottom, self.right_frame.width, self.right_frame.height-self.tab_bar_rect.height)
-        
+        self.content_area_rect = pygame.Rect(self.right_frame.left, self.tab_bar_rect.bottom, self.right_frame.width, self.right_frame.height - self.tab_bar_rect.height)
+
         # Cria as abas e calcula o posicionamento
-        self.tabs = []
+        self.tab_buttons = []
         tab_names = ["Upgrades", "Shop", "Status", "Campanha"]
-        self.active_tab = tab_names[0]
+        self.active_tab_name = tab_names[0]
+        
+        # Mapeia o nome da aba para a Classe da aba
+        self.tab_content = {
+            "Upgrades": UpgradeTab(self.game),
+            "Shop": ShopTab(self.game),
+            # "Status": StatusTab(self.game),     # Descomentar quando criar
+            # "Campanha": CampaignTab(self.game), # Descomentar quando criar
+        }
+        self.placeholder_tab_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-bold.otf", 24)
         for i, name in enumerate(tab_names):
             center_x = self.tab_bar_rect.left + (self.tab_bar_rect.width / (len(tab_names) + 1)) * (i + 1)
             tab = Button(text=name, 
@@ -46,7 +56,7 @@ class IdleScreen(BaseScene):
                          width=130, height=50, 
                          font=self.base_font, 
                          action=self.create_tab_action(name))
-            self.tabs.append(tab)
+            self.tab_buttons.append(tab)
 
     def _build_computer(self):
         self.is_overheated = False
@@ -82,7 +92,7 @@ class IdleScreen(BaseScene):
         self.left_frame_info.append((temp_surf, temp_rect))
 
     def create_tab_action(self, tab_name):
-        def action():self.active_tab = tab_name;print(tab_name)
+        def action():self.active_tab_name = tab_name;print(self.active_tab_name)
         return action
     
     def computer_click(self):
@@ -95,14 +105,21 @@ class IdleScreen(BaseScene):
 
     def handle_events(self, events):
         super().handle_events(events)
+
+        active_tab = self.tab_content.get(self.active_tab_name)
+        
         for event in events:
             for button in self.buttons:
                 button.handle_event(event)
             
             self.computer_click_button.handle_event(event)
 
-            for tab in self.tabs:
-                tab.handle_event(event)
+            for tab_button in self.tab_buttons:
+                tab_button.handle_event(event)
+            
+            if active_tab:
+                # Passa o evento E a área onde a aba pode operar
+                active_tab.handle_event(event, self.content_area_rect)
                 
     def update(self):
         # Atualiza o tempo de  jogo
@@ -115,6 +132,12 @@ class IdleScreen(BaseScene):
             self.is_overheated = True
         elif self.game.save_data['temperature'] <= self.game.save_data['recover_temperature']:  # Computador resfriou o bastante
             self.is_overheated = False
+
+        self._buil_left_frame_info()
+
+        active_tab = self.tab_content.get(self.active_tab_name)
+        if active_tab:
+            active_tab.update()
             
 
 
@@ -126,7 +149,6 @@ class IdleScreen(BaseScene):
 
         self.computer_click_button.draw(screen)
 
-        self._buil_left_frame_info()
         self.temp_bar.draw(screen)
         if self.is_overheated:
             screen.blit(self.fire, self.fire_rect)
@@ -134,6 +156,17 @@ class IdleScreen(BaseScene):
         for surface, rect in self.left_frame_info:
             screen.blit(surface, rect)
 
-        for tab in self.tabs:
-            tab.draw(screen)
+        for tab_button in self.tab_buttons:
+            tab_button.draw(screen)
+
+        active_tab = self.tab_content.get(self.active_tab_name)
+        if active_tab:
+            # Passa a tela E a área de conteúdo para a aba desenhar
+            active_tab.draw(screen, self.content_area_rect)
+        else:
+            # Fallback para abas não implementadas
+            placeholder_text = f"Conteúdo para '{self.active_tab_name}' não implementado."
+            surf = self.placeholder_tab_font.render(placeholder_text, True, config.COR_BUTTON_TEXT)
+            rect = surf.get_rect(center=self.content_area_rect.center)
+            screen.blit(surf, rect)
 
