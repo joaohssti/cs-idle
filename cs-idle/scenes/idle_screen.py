@@ -16,12 +16,11 @@ class IdleScreen(BaseScene):
 
         # Divide a tela em 2 partes, com 1/3 e com 2/3
         self.screen_rect = self.game.screen.get_rect()
-        self.left_frame = pygame.Rect(0, 0, self.screen_rect.width // 3, self.screen_rect.height)
-        self.right_frame = pygame.Rect(self.left_frame.width, 0, self.screen_rect.width * 2 // 3, self.screen_rect.height)
+        self.left_frame = pygame.Rect(0, 0, self.screen_rect.width // 2, self.screen_rect.height)
+        self.right_frame = pygame.Rect(self.left_frame.width, 0, self.screen_rect.width // 2, self.screen_rect.height)
         
         self.title_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-bold.otf", 20)
         self.base_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-light.otf", 18)
-        self.buttons = []
 
         # Temperatura
         self.temp_bar = ProgressBar(x=self.left_frame.left + 50, y=700, width=self.left_frame.width - 100, height=30, min_value=self.game.save_data["min_temperature"],max_value=self.game.save_data["max_temperature"])
@@ -109,16 +108,14 @@ class IdleScreen(BaseScene):
         active_tab = self.tab_content.get(self.active_tab_name)
         
         for event in events:
-            for button in self.buttons:
-                button.handle_event(event)
             
             self.computer_click_button.handle_event(event)
-
+            
+            # Eventos de abas
             for tab_button in self.tab_buttons:
                 tab_button.handle_event(event)
             
             if active_tab:
-                # Passa o evento E a área onde a aba pode operar
                 active_tab.handle_event(event, self.content_area_rect)
                 
     def update(self):
@@ -135,6 +132,7 @@ class IdleScreen(BaseScene):
 
         self._buil_left_frame_info()
 
+        # Update da aba ativa
         active_tab = self.tab_content.get(self.active_tab_name)
         if active_tab:
             active_tab.update()
@@ -142,26 +140,28 @@ class IdleScreen(BaseScene):
 
 
     def draw(self, screen):
+        pygame.draw.rect(screen, (0,75,0), self.left_frame)
         super().draw(screen)
 
-        for button in self.buttons:
-            button.draw(screen)
-
+        # Desenha o computador que o jogador clica
         self.computer_click_button.draw(screen)
 
+        # Desenha elementos relacionado a mecanica de temperatura
         self.temp_bar.draw(screen)
         if self.is_overheated:
             screen.blit(self.fire, self.fire_rect)
 
+        # Desenha as informações no frame esquerdo
         for surface, rect in self.left_frame_info:
             screen.blit(surface, rect)
 
+        # Desenha botões para selecionar abas
         for tab_button in self.tab_buttons:
             tab_button.draw(screen)
 
+        # Desenha conteúdo das abas
         active_tab = self.tab_content.get(self.active_tab_name)
         if active_tab:
-            # Passa a tela E a área de conteúdo para a aba desenhar
             active_tab.draw(screen, self.content_area_rect)
         else:
             # Fallback para abas não implementadas
