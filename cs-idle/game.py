@@ -1,5 +1,6 @@
 import pygame
 import config
+import json
 
 from scenes.main_menu import MainMenuScene
 from scenes.idle_screen import IdleScreen
@@ -14,6 +15,7 @@ class Game:
         self.saves_are_updated = False
         self.current_save = "New Game"
         self.save_data = {}
+        self.static_data = self._load_static_data()
 
         self.scenes = {
             "MAIN_MENU": MainMenuScene(self),
@@ -34,6 +36,19 @@ class Game:
         new_game_scene = IdleScreen(self)
         self.scenes["GAME"] = new_game_scene
         self.current_scene = self.scenes["GAME"]
+    
+    def _load_static_data(self):
+        data = {}
+        try:
+            with open('cs-idle/data/shop.json', 'r', encoding='utf-8') as f:
+                data['shop'] = json.load(f)
+            with open('cs-idle/data/upgrade.json', 'r', encoding='utf-8') as f:
+                data['upgrades'] = json.load(f)
+        except Exception as e:
+            print(f"Erro ao carregar dados estáticos: {e}")
+            pygame.quit()
+            exit()
+        return data
     
     def run(self):
         while self.running:

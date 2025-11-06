@@ -7,7 +7,6 @@ class Button:
         self.text = text
         self.font = font
         self.action = action
-        self.is_hovered = False
 
         # cria o retângulo do botão
         self.rect = pygame.Rect(0,0,width, height)
@@ -25,13 +24,18 @@ class Button:
 
         # Detecta se botão foi clicado e chama ação
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self.is_hovered:
-                if self.action:
-                    self.action()
+            if event.button != 1:
+                return
+            if not self.rect.collidepoint(event.pos):
+                return
+            if self.action:
+                self.action()
 
 
     def draw(self, screen):
-        color  = self.hover_color if self.is_hovered else self.color
+        
+        is_hovered = self.rect.collidepoint(pygame.mouse.get_pos())
+        color  = self.hover_color if is_hovered else self.color
 
         pygame.draw.rect(screen, color, self.rect, border_radius=10)
 

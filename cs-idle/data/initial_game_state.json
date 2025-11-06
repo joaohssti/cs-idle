@@ -4,5 +4,9 @@
     "min_temperature":30,
     "max_temperature":80,
     "recover_temperature":55,
-    "click_bytes":0
+    "click_bytes":0,
+    "click_power":1,
+    "shop_progress":{},
+    "unlocked_upgrades":["click_t1", "temp_t1"],
+    "upgrade_levels":{"click_t1":0, "temp_t1":0}
 }

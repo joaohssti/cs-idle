@@ -1,0 +1,30 @@
+{
+    "click_power": [
+        {
+            "name": "Mouse Básico",
+            "description": "Desbloqueia o upgrade 'Poder de Clique T1'.",
+            "cost": 50,
+            "unlocks_upgrade": "click_t1"
+        },
+        {
+            "name": "Mouse Gamer",
+            "description": "Desbloqueia o upgrade 'Poder de Clique T2'.",
+            "cost": 500,
+            "unlocks_upgrade": "click_t2"
+        }
+    ],
+    "min_temp": [
+        {
+            "name": "Ventoinha de PC",
+            "description": "Desbloqueia o upgrade 'Resfriamento T1'.",
+            "cost": 200,
+            "unlocks_upgrade": "temp_t1"
+        },
+        {
+            "name": "Nitrogênio Líquido",
+            "description": "Desbloqueia o upgrade 'Resfriamento T2'.",
+            "cost": 2000,
+            "unlocks_upgrade": "temp_t2"
+        }
+    ]
+}

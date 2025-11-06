@@ -30,6 +30,7 @@ class IdleScreen(BaseScene):
 
         # Botão de clicar no computador
         self._build_computer()
+        self.click_power = self.game.save_data['click_power']
 
         # Frames para abas e conteúdo das abas
         self.tab_bar_rect = pygame.Rect(self.right_frame.left, self.right_frame.top, self.right_frame.width, 100)
@@ -47,7 +48,7 @@ class IdleScreen(BaseScene):
             # "Status": StatusTab(self.game),     # Descomentar quando criar
             # "Campanha": CampaignTab(self.game), # Descomentar quando criar
         }
-        self.placeholder_tab_font = pygame.font.Font("cs-idle/fonts/Orbitron/orbitron-bold.otf", 24)
+        
         for i, name in enumerate(tab_names):
             center_x = self.tab_bar_rect.left + (self.tab_bar_rect.width / (len(tab_names) + 1)) * (i + 1)
             tab = Button(text=name, 
@@ -98,9 +99,8 @@ class IdleScreen(BaseScene):
         # bloqueia o funcionamento do clique se exceder temperatura máxima
         if self.is_overheated:
             return
-        click_power = 5
-        self.game.save_data['click_bytes'] += click_power
-        self.game.save_data['temperature'] = min( self.game.save_data['temperature'] + click_power, self.game.save_data['max_temperature']+5)
+        self.game.save_data['click_bytes'] += self.game.save_data['click_power']
+        self.game.save_data['temperature'] = min( self.game.save_data['temperature'] + self.game.save_data['click_power'], self.game.save_data['max_temperature']+5)
 
     def handle_events(self, events):
         super().handle_events(events)
@@ -116,7 +116,7 @@ class IdleScreen(BaseScene):
                 tab_button.handle_event(event)
             
             if active_tab:
-                active_tab.handle_event(event, self.content_area_rect)
+                active_tab.handle_event(event)
                 
     def update(self):
         # Atualiza o tempo de  jogo
@@ -166,7 +166,7 @@ class IdleScreen(BaseScene):
         else:
             # Fallback para abas não implementadas
             placeholder_text = f"Conteúdo para '{self.active_tab_name}' não implementado."
-            surf = self.placeholder_tab_font.render(placeholder_text, True, config.COR_BUTTON_TEXT)
+            surf = self.base_font.render(placeholder_text, True, config.COR_BUTTON_TEXT)
             rect = surf.get_rect(center=self.content_area_rect.center)
             screen.blit(surf, rect)
 
