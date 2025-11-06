@@ -77,8 +77,16 @@ class UpgradeTab(BaseTab):
             self.save_data['upgrade_levels'][upgrade_id] += 1
             
             self.build_ui()
+            self.status_update(upgrade_id)
             
         return buy_action
+    
+    def status_update(self, upgrade_id):
+        improvement = self.static_data['upgrades'][upgrade_id]['status_adder']
+        upgrade_type = self.static_data['upgrades'][upgrade_id]['type']
+        self.game.save_data[upgrade_type] += improvement
+
+        # Arrumar alguma forma de reconstruir a barra de temperatura
 
 class ShopTab(BaseTab):
     def __init__(self, game):
